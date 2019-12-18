@@ -1,0 +1,105 @@
+﻿<table class="table table-borderless table-sm text-center bb-table-cell-time" style="margin-bottom:0rem;">
+    <thead>
+        <tr>
+            <th scope="col" class="align-middle bb-cell-hover" @onclick="PreTime">
+                <span class="oi oi-chevron-left" />
+            </th>
+            <th scope="col" colspan="2">
+                <input class="form-control form-control-sm" type="time" @bind="Time" format-value="HH:mm" />
+            </th>
+            <th scope="col" class="align-middle bb-cell-hover" @onclick="NextTime" >
+                <span class="oi oi-chevron-right"/>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            if (firstTime == DateTime.MinValue)
+                firstTime = Time.Date;
+            int m = 0;
+            var cellTime = firstTime;
+            while (m < 16)
+            {
+                <tr class="bb-table-row-hover">
+                    @for (int i = 0; i < 4; i++)
+                    {
+                        <CalendarCell ID="@cellTime"
+                                      Text="@(cellTime.ToString("HH:mm"))"
+                                      OnClick="CellClick" />
+                        m += 1;
+                        cellTime = cellTime.AddMinutes(30);
+                    }
+                </tr>
+            }
+            <tr>
+                <td colspan="3" />
+                <td class="text-right">
+                    <span class="oi oi-calendar bb-cell-hover"  @onclick="ShowDateCalendar"/>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+
+@code {
+    [Parameter]
+    public EventCallback<DateTime> OnShowDate { get; set; }
+    private DateTime _time;
+    [Parameter]
+    public DateTime Time
+    {
+        get
+        {
+            return _time;
+        }
+        set
+        {
+            _time = value;
+            _currentTime = _time.TimeOfDay;
+        }
+    }
+
+
+    private DateTime firstTime;
+
+    private TimeSpan _currentTime;
+    private string CurrentTime
+    {
+        get
+        {
+            return $"{_currentTime.Hours:00}:{_currentTime.Minutes:00}";
+        }
+        set
+        {
+            TimeSpan.TryParse(value,out _currentTime);
+            //_currentTime =TimeSpan.Parse(value);
+            _time = _time.Date.AddHours(_currentTime.Hours).AddMinutes(_currentTime.Minutes);
+        }
+    }
+
+    private void ShowDateCalendar()
+    {
+        if (OnShowDate.HasDelegate)
+            OnShowDate.InvokeAsync(Time);
+    }
+
+    private void PreTime()
+    {
+        if (firstTime.TimeOfDay.TotalMinutes > 0)
+            firstTime = firstTime.AddMinutes(-480);
+    }
+
+    private void NextTime()
+    {
+        if (firstTime.TimeOfDay.TotalMinutes < 960)
+            firstTime = firstTime.AddMinutes(480);
+    }
+
+    private void CellClick(object ID)
+    {
+        Time = (DateTime)ID;
+        ShowDateCalendar();
+    }
+}

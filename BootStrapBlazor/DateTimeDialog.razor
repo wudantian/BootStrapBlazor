@@ -1,0 +1,68 @@
+﻿@using BootStrapBlazor.DateComponent
+
+<div class="input-group input-group-sm flex-nowrap border">
+    @if (IsShowTime)
+    {
+        <input type="datetime" class="form-control border-0" placeholder="Please input datetime" @bind="DateTime" />
+    }
+    else
+    {
+        <input type="text" class="form-control border-0" placeholder="Please input datetime" @bind="DateString" />
+    }
+    <div class="input-group-append">
+        <span class="align-content-center align-bottom oi oi-calendar m-2" @onclick="ShowDialog">
+        </span>
+    </div>
+
+</div>
+<Modal @ref="dialog" Title="选择日期与时间">
+    <Content>
+        <DateTimeContent DateTime="DateTime" OnCancel="CloseDialog" OnOK="ToDo" IsShowTime="IsShowTime" />
+    </Content>
+</Modal>
+
+@code {
+    [Parameter]
+    public DateTime DateTime { get; set; } = DateTime.Now;
+    [Parameter]
+    public bool IsShowTime { get; set; } = true;
+
+    private string DateString
+    {
+        get
+        {
+            return DateTime.ToString("yyyy/MM/dd");
+        }
+        set
+        {
+            DateTime d;
+            DateTime.TryParse(value, out d);
+            if (d > DateTime.MinValue)
+            {
+                DateTime = d;
+            }
+        }
+    }
+
+    [Parameter]
+    public EventCallback<DateTime> OnOK { get; set; }
+    private Modal dialog;
+    private void ShowDialog()
+    {
+        dialog.Show();
+    }
+
+    private void CloseDialog()
+    {
+        dialog.Close();
+    }
+
+    private void ToDo(DateTime date)
+    {
+        DateTime = date;
+        if (OnOK.HasDelegate)
+            OnOK.InvokeAsync(DateTime);
+        dialog.Close();
+    }
+
+}

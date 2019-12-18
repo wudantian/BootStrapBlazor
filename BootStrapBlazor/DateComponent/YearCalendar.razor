@@ -1,0 +1,65 @@
+﻿<table class="table table-borderless table-sm text-center bb-table-cell-year">
+    <thead>
+        <tr>
+            <th scope="col" class="align-middle bb-cell-hover" @onclick="PreYears">
+                <span class="oi oi-chevron-left" />
+            </th>
+            <th scope="col" colspan="2">
+                <span class="bb-span-title">@DateTime.ToString("yyyy年")</span>
+            </th>
+            <th scope="col" class="align-middle bb-cell-hover" @onclick="NextYears">
+                <span class="oi oi-chevron-right" />
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            if (DateTime > DateTime.MinValue)
+            {
+                var firstYear = DateTime.AddYears(-5);
+                int m = 1;
+                while (m < 13)
+                {
+                    <tr class="bb-table-row-hover">
+                        @for (int i = 0; i < 4; i++)
+                        {
+                            <CalendarCell ID="@firstYear"
+                                          Text="@(firstYear.ToString("yyyy"))"
+                                          OnClick="CellClick" />
+                            m += 1;
+                            firstYear = firstYear.AddYears(1);
+                        }
+                    </tr>
+                };
+            }
+        }
+    </tbody>
+</table>
+
+@code {
+    [Parameter]
+    public DateTime DateTime { get; set; }
+    [Parameter]
+    public EventCallback<DateTime> OnYearClick { get; set; }
+
+    private void PreYears()
+    {
+        DateTime = DateTime.AddYears(-12);
+    }
+
+    private void NextYears()
+    {
+        DateTime = DateTime.AddYears(12);
+    }
+
+    private void YearClick()
+    {
+        OnYearClick.InvokeAsync(DateTime);
+    }
+
+    private void CellClick(object ID)
+    {
+        DateTime = (DateTime)ID;
+        OnYearClick.InvokeAsync(DateTime);
+    }
+}

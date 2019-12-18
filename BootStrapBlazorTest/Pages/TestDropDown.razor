@@ -1,0 +1,52 @@
+﻿@page "/TestDropDown"
+@using BootStrapBlazor
+
+<h3>Test DropDown</h3>
+<DropDown>
+    <Content>
+        <a class="dropdown-item" href="#">Action</a>
+        <a class="dropdown-item" href="#">Another action</a>
+        <a class="dropdown-item" href="#">Something else here</a>
+        <label @onclick:stopPropagation>lable</label>
+    </Content>
+</DropDown>
+
+<h6>Drop Up</h6>
+<DropDown DropDirection="up">
+    <Content>
+        <a class="dropdown-item" href="#">Action</a>
+        <a class="dropdown-item" href="#">Another action</a>
+        <a class="dropdown-item" href="#">Something else here</a>
+    </Content>
+</DropDown>
+
+<h6>Drop Left</h6>
+<DropDown DropDirection="right">
+    <Content>
+        <a class="dropdown-item" href="#">Action</a>
+        <a class="dropdown-item" href="#">Another action</a>
+        <a class="dropdown-item" href="#">Something else here</a>
+    </Content>
+</DropDown>
+
+<h6>Menu Right</h6>
+<DropDown MenuDirection="right">
+    <Content>
+        <a class="dropdown-item" href="#">Action</a>
+        <a class="dropdown-item" href="#">Another action</a>
+        <a class="dropdown-item" href="#">Something else here</a>
+    </Content>
+</DropDown>
+
+<h6>Small Button</h6>
+<DropDown IsSmall="true">
+    <Content>
+        <a class="dropdown-item" href="#">Action</a>
+        <a class="dropdown-item" href="#">Another action</a>
+        <a class="dropdown-item" href="#">Something else here</a>
+    </Content>
+</DropDown>
+
+@code {
+
+}

@@ -1,0 +1,26 @@
+﻿<td @onclick="Click">
+    <span class="bb-span-hover text-nowrap @muteCss @selectCss2">
+        @Text
+    </span>
+</td>
+
+@code {
+    [Parameter]
+    public string Text { get; set; }
+    [Parameter]
+    public object ID { get; set; }
+    [Parameter]
+    public bool IsMute { get; set; }
+    [Parameter]
+    public bool IsSelected { get; set; }
+    [Parameter]
+    public EventCallback<object> OnClick { get; set; }
+
+    private string muteCss => IsMute ? "text-muted" : null;
+    private string selectCss2 => IsSelected ? "bb-table-cell-selected" : null;
+    private void Click()
+    {
+        if (OnClick.HasDelegate)
+            OnClick.InvokeAsync(ID);
+    }
+}

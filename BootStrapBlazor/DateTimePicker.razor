@@ -1,0 +1,164 @@
+﻿@using Microsoft.JSInterop
+@using BootStrapBlazor.DateComponent
+@inject IJSRuntime JSRuntime
+
+<div class="input-group input-group-sm  btn-group flex-nowrap border @dropDirectCss">
+    @if (IsShowTime)
+    {
+        <input type="datetime" class="form-control border-0" placeholder="Please input datetime" @bind="DateTime" />
+    }
+    else
+    {
+        <input type="text" class="form-control border-0" placeholder="Please input datetime" @bind="DateString" />
+    }
+    <div class="input-group-append" >
+        <span class="align-content-center align-bottom oi oi-calendar m-2 bb-touchable" data-toggle="dropdown" 
+              >
+        </span>
+        <div class="dropdown-menu dropdown-menu-right" @ref="picker">
+            <form class="dropdown-item-text">
+                @switch (mode)
+                {
+                    case "date":
+                        <DateCalendar DateTime="DateTime" IsShowTime="@IsShowTime"
+                                      OnMonthClick="ChangeMonthMode"
+                                      OnDayClick="SelecedDate"
+                                      OnShowTime="ChangeTimeMode" />
+                        break;
+                    case "month":
+                        <MonthCalendar DateTime="DateTime"
+                                       OnYearClick="ChangeYearMode"
+                                       OnMonthClick="ChangeDateMode" />
+                        break;
+                    case "year":
+                        <YearCalendar DateTime="DateTime"
+                                      OnYearClick="ChangeMonthMode" />
+                        break;
+                    case "time":
+                        <TimeCalendar Time="DateTime"
+                                      OnShowDate="ChangeDateMode" />
+                        break;
+                }
+            </form>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public DateTime DateTime { get; set; } = DateTime.Now;
+    [Parameter]
+    public EventCallback<DateTime> OnSelectedDate { get; set; }
+    [Parameter]
+    public bool IsShowTime { get; set; } = true;
+
+    [Parameter]
+    public string MenuDirection { get; set; }
+    [Parameter]
+    public string DropDirection { get; set; }
+
+    private ElementReference picker;
+
+    private string menuDirectCss
+    {
+        get
+        {
+            switch (MenuDirection)
+            {
+                case "right":
+                    return "dropdown-menu-right";
+                case "left":
+                    return "dropdown-menu-left";
+                default:
+                    return null;
+            }
+        }
+    }
+
+    private string dropDirectCss
+    {
+        get
+        {
+            switch (DropDirection)
+            {
+                case "up":
+                    return "dropup";
+                case "right":
+                    return "dropright";
+                case "left":
+                    return "dropleft";
+                default:
+                    return "dropdown";
+            }
+        }
+    }
+
+    private string DateString
+    {
+        get
+        {
+            return DateTime.ToString("yyyy/MM/dd");
+        }
+        set
+        {
+            DateTime d;
+            DateTime.TryParse(value, out d);
+            if (d > DateTime.MinValue)
+            {
+                DateTime = d;
+            }
+            else
+                DateTime = DateTime.Now;
+        }
+    }
+
+    private string mode = "date";
+
+    private void SelecedDate(DateTime date)
+    {
+        DateTime = date;
+        Hide();
+        if (OnSelectedDate.HasDelegate)
+            OnSelectedDate.InvokeAsync(date);
+    }
+
+    private void ChangeMonthMode(DateTime date)
+    {
+        mode = "month";
+        DateTime = date;
+    }
+
+    private void ChangeYearMode(DateTime date)
+    {
+        mode = "year";
+        DateTime = date;
+    }
+
+    private void ChangeDateMode(DateTime date)
+    {
+        mode = "date";
+        DateTime = date;
+    }
+
+    private void ChangeTimeMode(DateTime date)
+    {
+        mode = "time";
+        DateTime = date;
+    }
+
+    private void Hide()
+    {
+        JSRuntime.InvokeVoidAsync("bootstrapDropDownFunctions.hide", picker);
+    }
+
+    private void Show()
+    {
+        JSRuntime.InvokeVoidAsync("bootstrapDropDownFunctions.show", picker);
+    }
+
+    private void Toggle()
+    {
+        JSRuntime.InvokeVoidAsync("bootstrapDropDownFunctions.toggle", picker);
+    }
+
+}

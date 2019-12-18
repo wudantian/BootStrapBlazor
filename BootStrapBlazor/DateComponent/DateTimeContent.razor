@@ -1,0 +1,108 @@
+﻿<div class="modal-body">
+    @switch (mode)
+    {
+        case "date":
+            <DateCalendar DateTime="PreDateTime" IsShowTime="@IsShowTime"
+                          OnMonthClick="ChangeMonthMode"
+                          OnDayClick="DayCellClick"
+                          OnShowTime="ChangeTimeMode" />
+            break;
+        case "month":
+            <MonthCalendar DateTime="PreDateTime"
+                           OnYearClick="ChangeYearMode"
+                           OnMonthClick="ChangeDateMode" />
+            break;
+        case "year":
+            <YearCalendar DateTime="PreDateTime"
+                          OnYearClick="ChangeMonthMode" />
+            break;
+        case "time":
+            <TimeCalendar Time="PreDateTime"
+                          OnShowDate="ChangeDateMode" />
+            break;
+    }
+</div>
+<div class="modal-footer justify-content-between">
+    @if (IsShowTime)
+    {
+        <span>@PreDateTime.ToString("yyyy/MM/dd HH:mm:ss")</span>
+    }
+    else
+    {
+        <span>@PreDateTime.ToString("yyyy/MM/dd")</span>
+    }
+    <div class="justify-content-end">
+        <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+        <button type="button" class="btn btn-primary" @onclick="Ok">OK</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Title { get; set; }
+    [Parameter]
+    public bool IsShowTime { get; set; } = true;
+
+    private DateTime _date;
+    [Parameter]
+    public DateTime DateTime
+    {
+        get { return _date; }
+        set
+        {
+            _date = value;
+            if (PreDateTime == DateTime.MinValue)
+                PreDateTime = value;
+        }
+    }
+    [Parameter]
+    public EventCallback<object> OnCancel { get; set; }
+    [Parameter]
+    public EventCallback<DateTime> OnOK { get; set; }
+
+    private DateTime PreDateTime;
+
+    private string mode = "date";
+
+    private void ChangeMonthMode(DateTime date)
+    {
+        mode = "month";
+        PreDateTime = date;
+    }
+
+    private void ChangeYearMode(DateTime date)
+    {
+        mode = "year";
+        PreDateTime = date;
+    }
+
+    private void ChangeDateMode(DateTime date)
+    {
+        mode = "date";
+        PreDateTime = date;
+    }
+
+    private void ChangeTimeMode(DateTime date)
+    {
+        mode = "time";
+        PreDateTime = date;
+    }
+
+    private void DayCellClick(DateTime date)
+    {
+        PreDateTime = date;
+    }
+
+    private void Cancel()
+    {
+        if (OnCancel.HasDelegate)
+            OnCancel.InvokeAsync(null);
+    }
+
+    private void Ok()
+    {
+        DateTime = PreDateTime;
+        if (OnOK.HasDelegate)
+            OnOK.InvokeAsync(DateTime);
+    }
+}

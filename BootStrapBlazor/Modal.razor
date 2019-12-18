@@ -1,0 +1,54 @@
+﻿@using Microsoft.JSInterop;
+@inject IJSRuntime JSRuntime;
+
+<div @ref="modal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@Title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            @Content
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Title { get; set; }
+    [Parameter]
+    public RenderFragment Content { get; set; }
+    [Parameter]
+    public EventCallback<object> OnClosed { get; set; }
+
+    private ElementReference modal;
+    private SimpleEvent evt = new SimpleEvent();
+    public void Show()
+    {
+        JSRuntime.InvokeVoidAsync("bootstrapModalFunctions.show", modal);
+        evt.ID = modal.Id.ToString();
+        evt.triggerDelegate = new SimpleEvent.OnTrigger(Closed);
+        EventRegs.RegEvent(evt);
+        JSRuntime.InvokeVoidAsync("bootstrapModalFunctions.onclosed", modal, modal.Id.ToString());
+    }
+
+    public void Close()
+    {
+        JSRuntime.InvokeVoidAsync("bootstrapModalFunctions.close", modal);
+    }
+
+    private void Closed()
+    {
+        if (OnClosed.HasDelegate)
+            OnClosed.InvokeAsync(null);
+    }
+
+    [JSInvokable]
+    public static void ModelClosed(string id)
+    {
+        EventRegs.OnTrigger(id);
+    }
+
+}

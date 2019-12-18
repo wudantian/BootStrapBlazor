@@ -1,0 +1,120 @@
+﻿<table class="table table-borderless table-sm text-center" style="margin-bottom:0rem;">
+    <thead>
+        <tr class="bb-table-head-hover">
+            <th scope="col" class="align-middle" @onclick="PreMonth">
+                <span class="oi oi-chevron-left" />
+            </th>
+            <th scope="col" colspan="5">
+                <span class="bb-span-title" @onclick="MonthClick">@preDate.ToString("yyyy年MM月")</span>
+            </th>
+            <th scope="col" class="align-middle" @onclick="NextMonth">
+                <span class="oi oi-chevron-right" />
+            </th>
+        </tr>
+        <tr>
+            <th>日</th>
+            <th>一</th>
+            <th>二</th>
+            <th>三</th>
+            <th>四</th>
+            <th>五</th>
+            <th>六</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            if (DateTime > DateTime.MinValue)
+            {
+                var firstDayInMonth = new DateTime(preDate.Year, preDate.Month, 1, preDate.Hour, preDate.Minute, preDate.Second);
+                var firstDayInWeek = (int)firstDayInMonth.DayOfWeek;
+                var firstDayInCalendar = firstDayInMonth.AddDays(-1 * firstDayInWeek);
+                var lastDayInCalendar = firstDayInCalendar.AddDays(34);
+                var lastDayInMonth = firstDayInMonth.AddDays(DateTime.DaysInMonth(preDate.Year, preDate.Month) - 1);
+                while (firstDayInCalendar < lastDayInCalendar)
+                {
+                    <tr class="bb-table-row-hover">
+                        @for (int i = 0; i < 7; i++)
+                        {
+                            <CalendarCell ID="@firstDayInCalendar"
+                                          IsMute="@(firstDayInCalendar< firstDayInMonth || firstDayInCalendar>lastDayInMonth)"
+                                          IsSelected="@(DateTime.Date==firstDayInCalendar.Date)"
+                                          Text="@firstDayInCalendar.Day.ToString()"
+                                          OnClick="CellClick" />
+                            firstDayInCalendar = firstDayInCalendar.AddDays(1);
+                        }
+                    </tr>
+                };
+                if (IsShowTime)
+                {
+                    <tr>
+                        <td colspan="6"></td>
+                        <td>
+                            <span class="oi oi-timer bb-cell-hover" @onclick="ShowTime" />
+                        </td>
+                    </tr>
+                }
+            }
+        }
+    </tbody>
+</table>
+
+@code {
+    private DateTime _date;
+    [Parameter]
+    public DateTime DateTime
+    {
+        get
+        {
+            return _date;
+        }
+        set
+        {
+            if (value == DateTime.MinValue)
+                _date = DateTime.Now;
+            else
+                _date = value;
+            if (preDate == DateTime.MinValue)
+                preDate = _date;
+        }
+    }
+
+    [Parameter]
+    public bool IsShowTime { get; set; } = false;
+    [Parameter]
+    public EventCallback<DateTime> OnDayClick { get; set; }
+    [Parameter]
+    public EventCallback<DateTime> OnMonthClick { get; set; }
+    [Parameter]
+    public EventCallback<DateTime> OnShowTime { get; set; }
+
+    private DateTime preDate;
+
+    private void PreMonth()
+    {
+        preDate = preDate.AddMonths(-1);
+    }
+    private void NextMonth()
+    {
+        preDate = preDate.AddMonths(1);
+    }
+
+    private void CellClick(object ID)
+    {
+        DateTime = (DateTime)ID;
+        preDate = DateTime;
+        if (OnDayClick.HasDelegate)
+            OnDayClick.InvokeAsync(DateTime);
+    }
+
+    private void MonthClick()
+    {
+        if (OnMonthClick.HasDelegate)
+            OnMonthClick.InvokeAsync(preDate);
+    }
+
+    private void ShowTime()
+    {
+        if (OnShowTime.HasDelegate)
+            OnShowTime.InvokeAsync(DateTime);
+    }
+}

@@ -1,0 +1,115 @@
+﻿/*
+    This file is to show how CSS and other static resources (such as images) can be
+    used from a library project/package.
+*/
+@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+
+.bb-table-row-hover td:hover {
+    color: #212529;
+    background-color: rgba(0, 0, 0, 0.075);
+}
+
+.bb-cell-hover:hover {
+    background-color: rgba(0, 0, 0, 0.075);
+}
+
+.bb-table-head-hover th:hover {
+    color: #212529;
+    background-color: rgba(0, 0, 0, 0.075);
+}
+
+.bb-table-cell-month td{
+    padding-top:1.3rem;
+    padding-bottom:1.3rem;
+    padding-left:0.55rem;
+    padding-right:0.55rem;
+}
+
+.bb-table-cell-year td{
+    padding-top:1.3rem;
+    padding-bottom:1.3rem;
+    padding-left:0.39rem;
+    padding-right:0.39rem;
+}
+
+.bb-table-cell-time td {
+    padding-top: 0.65rem;
+    padding-bottom: 0.65rem;
+    padding-left: 0.24rem;
+    padding-right: 0.24rem;
+}
+
+.bb-span-hover{
+    cursor:default;
+}
+
+.bb-span-hover span:hover {
+    color: #212529;
+    background-color: rgba(0, 0, 0, 0.075);
+}
+
+.bb-span-title {
+    font-size:large;
+    font-weight:bold;
+    cursor:default;
+}
+
+.bb-table-cell-selected{
+    text-decoration:underline;
+    color: dodgerblue;
+}
+
+.bb-swith{
+    color:#4cff00;
+    border:2px solid #a6a6a6;
+    border-radius:20px;
+    box-sizing:border-box;
+}
+
+.bb-switch-track {
+    display:flex;
+    background-color: #e2e3e5;
+    border-color: #d6d8db;
+    border-radius:20px;
+    width:2.5rem;
+    height:1.4rem;
+    left:0;
+    position:absolute;
+    align-items:center;
+    justify-content:center;
+}
+
+.bb-switch-track-on {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.bb-switch-knob {
+    background-color: white;
+    border-radius: 50%;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.5);
+    box-sizing:border-box;
+    display:flex;
+    width:1.4rem;
+    height:1.4rem;
+    left:0;
+    position:absolute;
+    align-items:center;
+    justify-content:left;
+}
+
+.bb-switch-knob-on {
+    background-color: #28a745;
+    border-color: #28a745;
+    justify-content: right;
+    right: 0;
+    left: auto;
+}
+
+.bb-small-text {
+    font-size:small;
+}
+
+.bb-touchable{
+    cursor:pointer;
+}

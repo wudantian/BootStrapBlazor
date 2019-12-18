@@ -1,0 +1,88 @@
+﻿<table class="table table-borderless table-sm text-center bb-table-cell-month">
+    <thead>
+        <tr class="bb-table-head-hover">
+            <th scope="col" class="align-middle" @onclick="PreYear">
+                <span class="oi oi-chevron-left" />
+            </th>
+            <th scope="col" colspan="2">
+                <span class="bb-span-title" @onclick="YearClick">@preDate.ToString("yyyy年")</span>
+            </th>
+            <th scope="col" class="align-middle" @onclick="NextYear">
+                <span class="oi oi-chevron-right" />
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            if (DateTime > DateTime.MinValue)
+            {
+                var m = 1;
+                while (m < 13)
+                {
+                    <tr class="bb-table-row-hover">
+                        @for (int i = 0; i < 4; i++)
+                        {
+                            <CalendarCell ID="@m"
+                                          Text="@(m.ToString("0月"))"
+                                          OnClick="CellClick" />
+                            m += 1;
+                        }
+                    </tr>
+                };
+            }
+        }
+    </tbody>
+</table>
+
+@code {
+    private DateTime _date;
+    [Parameter]
+    public DateTime DateTime
+    {
+        get
+        {
+            return _date;
+        }
+        set
+        {
+            if (value == DateTime.MinValue)
+                _date = DateTime.Now;
+            else
+                _date = value;
+            if (preDate == DateTime.MinValue)
+                preDate = value;
+        }
+    }
+
+    private DateTime preDate;
+    [Parameter]
+    public EventCallback<DateTime> OnYearClick { get; set; }
+    [Parameter]
+    public EventCallback<DateTime> OnMonthClick { get; set; }
+
+    private void PreYear()
+    {
+        preDate = preDate.AddYears(-1);
+    }
+
+    private void NextYear()
+    {
+        preDate = preDate.AddYears(1);
+    }
+
+    private void YearClick()
+    {
+        OnYearClick.InvokeAsync(DateTime);
+    }
+
+    private void CellClick(object ID)
+    {
+        DateTime newDate = new DateTime(preDate.Year, (int)ID, 1, preDate.Hour, preDate.Minute, preDate.Second);
+        var day = DateTime.DaysInMonth(newDate.Year, newDate.Month);
+        if (day > DateTime.Day)
+            day = DateTime.Day;
+        DateTime = newDate.AddDays(day - 1);
+        preDate = DateTime;
+        OnMonthClick.InvokeAsync(DateTime);
+    }
+}

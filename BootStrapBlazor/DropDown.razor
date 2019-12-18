@@ -1,0 +1,55 @@
+﻿<div class="btn-group @dropDirectCss">
+    <button class="btn btn-primary dropdown-toggle @smallCss" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Dropdown button
+    </button>
+    <div class="dropdown-menu @menuDirectCss">
+        @Content
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment Content { get; set; }
+
+    [Parameter]
+    public string MenuDirection { get; set; }
+    [Parameter]
+    public string DropDirection { get; set; }
+    [Parameter]
+    public bool IsSmall { get; set; }
+    private string smallCss => IsSmall ? "btn-sm" : null;
+
+    private string menuDirectCss
+    {
+        get
+        {
+            switch (MenuDirection)
+            {
+                case "right":
+                    return "dropdown-menu-right";
+                case "left":
+                    return "dropdown-menu-left";
+                default:
+                    return null;
+            }
+        }
+    }
+
+    private string dropDirectCss
+    {
+        get
+        {
+            switch (DropDirection)
+            {
+                case "up":
+                    return "dropup";
+                case "right":
+                    return "dropright";
+                case "left":
+                    return "dropleft";
+                default:
+                    return null;
+            }
+        }
+    }
+}

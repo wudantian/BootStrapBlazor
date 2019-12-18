@@ -1,0 +1,27 @@
+﻿<span class="bb-switch-track @trackOnCss">
+    @if (IsEnable)
+    {
+        <span class="bb-switch-knob @knobOnCss" @onclick="Toggle" 
+              @ontouchstart="Toggle" @ontouchend:preventDefault></span>
+    }
+</span>
+
+@code {
+    [Parameter]
+    public bool IsOn { get; set; } = false;
+    [Parameter]
+    public bool IsEnable { get; set; } = true;
+    [Parameter]
+    public EventCallback<bool> OnSwitch { get; set; }
+
+    private string trackOnCss => IsOn ? "bb-switch-track-on" : null;
+    private string knobOnCss => IsOn ? "bb-switch-knob-on" : null;
+
+    private void Toggle()
+    {
+        IsOn = !IsOn;
+        if (OnSwitch.HasDelegate)
+            OnSwitch.InvokeAsync(IsOn);
+    }
+
+}

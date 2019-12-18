@@ -1,0 +1,44 @@
+﻿@page "/testmodal"
+@using BootStrapBlazor
+
+<h3>TestModal</h3>
+
+<button type="button" class="btn btn-primary" @onclick="ShowDialog">
+    Launch demo modal
+</button>
+
+<h6>@message</h6>
+
+<Modal @ref="dialog"  Title="Modal Title" OnClosed="DialogClosed">
+    <Content>
+        <div class="modal-body">
+            <p>Modal body text goes here.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" @onclick="CloseDialog">Close</button>
+            <button type="button" class="btn btn-primary" @onclick="CloseDialog">Save changes</button>
+        </div>
+    </Content>
+</Modal>
+
+
+@code {
+    private Modal dialog;
+
+    private string message;
+    private void ShowDialog()
+    {
+        dialog.Show();
+        message = "Modal Open";
+    }
+
+    private void CloseDialog()
+    {
+        dialog.Close();
+    }
+
+    private void DialogClosed()
+    {
+        message = "Modal Closed";
+    }
+}
